@@ -9,7 +9,6 @@ import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
-import com.github.solmyr.jicl.commands.instantiation.CommandInstantiator;
 import com.github.solmyr.jicl.commands.manager.CommandsManager;
 import com.github.solmyr.jicl.commands.manager.ICommand;
 import com.github.solmyr.jicl.specialcommands.ExitCommand;
