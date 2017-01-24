@@ -2,32 +2,26 @@ package com.github.solmyr.jicl.specialcommands;
 
 import java.util.Map;
 
+import com.github.solmyr.jicl.Strings;
+import com.github.solmyr.jicl.StringsKey;
 import com.github.solmyr.jicl.commands.manager.Command;
-import com.github.solmyr.jicl.commands.manager.ICommand;
 
-public class GlobalHelpCommand implements ICommand {
+public class GlobalHelpCommand extends BasicAbstractCommand {
 	private Map<String, Class<?>> commandMap;
-	private final String HELP_KEYWORD;
-	private final String EXIT_KEYWORD;
 	
 	public GlobalHelpCommand(Map<String, Class<?>> commandMap, String HELP_KEYWORD, String EXIT_KEYWORD) {
 		this.commandMap = commandMap;
-		this.HELP_KEYWORD = HELP_KEYWORD;
-		this.EXIT_KEYWORD = EXIT_KEYWORD;
-	}
-
-	public void init() {		
 	}
 
 	public void process() {
-		System.out.println("Mozne prikazy: ");
-		System.out.println(HELP_KEYWORD + " - vypise vsechny prikazy");
-		System.out.println(HELP_KEYWORD + " <prikaz> - vypise pouziti prikazu");
+		out.println(Strings.m(StringsKey.HELP_POSIBLE_COMMANDS));
+		out.println(Strings.m(StringsKey.HELP_KEYWORD) + " - vypise vsechny prikazy");
+		out.println(Strings.m(StringsKey.HELP_KEYWORD) + Strings.m(StringsKey.COMMAND) + " - vypise pouziti prikazu");
 		for (Class<?> clazz : commandMap.values()) {
 			Command command = clazz.getAnnotation(Command.class);
-			System.out.println(command.name() + " - " + command.description());
+			out.println(command.name() + " - " + command.description());
 		}
-		System.out.println(EXIT_KEYWORD + " - ukonci konzolu");
+		out.println(Strings.m(StringsKey.EXIT_KEYWORD) + Strings.m(StringsKey.MESSAGE_END_CONSOLE));
 	}
 
 }

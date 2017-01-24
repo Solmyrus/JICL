@@ -1,15 +1,11 @@
 package com.github.solmyr.jicl.specialcommands;
 
-import com.github.solmyr.jicl.commands.manager.ICommand;
+import com.github.solmyr.jicl.Strings;
+import com.github.solmyr.jicl.StringsKey;
 
-public class ExitCommand implements ICommand{
-
-	public void init() {
-	}
+public class ExitCommand extends BasicAbstractCommand {
 
 	public void process() {
-		System.out.println("Ukoncuji CLI");
-		
+		out.println(Strings.m(StringsKey.CLOSING));
 	}
-
 }

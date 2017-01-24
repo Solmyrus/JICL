@@ -2,21 +2,14 @@ package com.github.solmyr.jicl;
 
 import com.github.solmyr.jicl.commands.instantiation.BasicCommandInstantiator;
 import com.github.solmyr.jicl.commands.instantiation.CommandInstantiator;
+import com.github.solmyr.jicl.commands.manager.ICommand;
 
 public class CommandLineBuilder {
 	private CommandLineConfig clc;
-	private static final String DEFAULT_PROMPT_SYMBOL = ">";
-	private static final String DEFAULT_UNKNOWN_COMMAND_MESSAGE = "!!! Neznamy prikaz !!!";
-	private static final String DEFAULT_HELP_KEYWOD = "help";
-	private static final String DEFAULT_EXIT_KEYWORD = "exit";
-	
 	public CommandLineBuilder() {
 		clc = new CommandLineConfig();
-		clc.setPromptSymbol(DEFAULT_PROMPT_SYMBOL);
-		clc.setUnknownCommandMessage(DEFAULT_UNKNOWN_COMMAND_MESSAGE);
-		clc.setExitKeyword(DEFAULT_EXIT_KEYWORD);
-		clc.setHelpKeyword(DEFAULT_HELP_KEYWOD);
 		clc.setCommInstantiator(new BasicCommandInstantiator());
+		clc.setOutputStream(System.out);
 	}
 	
 	public CommandLine build() {
@@ -24,22 +17,7 @@ public class CommandLineBuilder {
 	}
 	
 	public CommandLineBuilder promptSymbol(String symbol) {
-		clc.setPromptSymbol(symbol);
-		return this;
-	}
-	
-	public CommandLineBuilder helpKeyword(String keyword) {
-		clc.setHelpKeyword(keyword);
-		return this;
-	}
-	
-	public CommandLineBuilder exitKeyword(String keyword) {
-		clc.setExitKeyword(keyword);
-		return this;
-	}
-	
-	public CommandLineBuilder unknownCommandMessage(String message) {
-		clc.setUnknownCommandMessage(message);
+		clc.getStrings().put(StringsKey.PROMPT_SYMBOL.getKey(), symbol);
 		return this;
 	}
 	
@@ -53,7 +31,34 @@ public class CommandLineBuilder {
 		return this;
 	}
 	
+	public CommandLineBuilder includeCommand(Class<? extends ICommand> clazz) {
+		clc.getIncludedCommands().add(clazz);
+		return this;
+	}
 	
+	public CommandLineBuilder excludeCommand(Class<? extends ICommand> clazz) {
+		clc.getExcludedCommands().add(clazz);
+		return this;
+	}
 	
+	public CommandLineBuilder commandInstantiator(CommandInstantiator inst) {
+		clc.setCommInstantiator(inst);
+		return this;
+	}
+	
+	public CommandLineBuilder addSpecificString(StringsKey key, String string) {
+		clc.getStrings().put(key.getKey(), string);
+		return this;
+	}
+	
+	public CommandLineBuilder addSpecificString(String key, String string) {
+		clc.getStrings().put(key, string);
+		return this;
+	}
+	
+	public CommandLineBuilder stringsFileName(String fileName) {
+		clc.setStringsFileName(fileName);
+		return this;
+	}
 	
 }

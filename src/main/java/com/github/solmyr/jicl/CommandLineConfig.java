@@ -1,57 +1,38 @@
 package com.github.solmyr.jicl;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.solmyr.jicl.commands.instantiation.CommandInstantiator;
 
 public class CommandLineConfig {
-	private String promptSymbol;
-	private String unknownCommandMessage;
-	private List<String> commandsPackage = new ArrayList<String>();
-	private String helpKeyword;
-	private String exitKeyword;
 	private CommandInstantiator commInstantiator;
+	private String stringsFileName;
 	
+	public void setStringsFileName(String stringsFileName) {
+		this.stringsFileName = stringsFileName;
+	}
+
+	private Map<String, String> strings = new HashMap<>();
+
+	private List<String> commandsPackage = new ArrayList<String>();
+	private List<Class<?>> includedCommands = new ArrayList<Class<?>>();
+	private List<Class<?>> excludedCommands = new ArrayList<Class<?>>();
+	
+	private PrintStream outputStream;
+
 	public List<String> getCommandsPackage() {
 		return commandsPackage;
 	}
 
-	public void setCommandsPackage(List<String> commandsPackage) {
+	public void CommandsPackage(List<String> commandsPackage) {
 		this.commandsPackage = commandsPackage;
 	}
 
-	public String getPromptSymbol() {
-		return promptSymbol;
-	}
 
-	public void setPromptSymbol(String promptSymbol) {
-		this.promptSymbol = promptSymbol;
-	}
-
-	public String getUnknownCommandMessage() {
-		return unknownCommandMessage;
-	}
-
-	public void setUnknownCommandMessage(String unknownCommandMessage) {
-		this.unknownCommandMessage = unknownCommandMessage;
-	}
-
-	public String getHelpKeyword() {
-		return helpKeyword;
-	}
-
-	public void setHelpKeyword(String helpKeyword) {
-		this.helpKeyword = helpKeyword;
-	}
-
-	public String getExitKeyword() {
-		return exitKeyword;
-	}
-
-	public void setExitKeyword(String exitKeyword) {
-		this.exitKeyword = exitKeyword;
-	}
 
 	public CommandInstantiator getCommInstantiator() {
 		return commInstantiator;
@@ -60,10 +41,36 @@ public class CommandLineConfig {
 	public void setCommInstantiator(CommandInstantiator commInstantiator) {
 		this.commInstantiator = commInstantiator;
 	}
-	
-	
-	
-	
-	
 
+	public List<Class<?>> getIncludedCommands() {
+		return includedCommands;
+	}
+
+	public void setIncludedCommands(List<Class<?>> includedCommands) {
+		this.includedCommands = includedCommands;
+	}
+
+	public List<Class<?>> getExcludedCommands() {
+		return excludedCommands;
+	}
+
+	public void setExcludedCommands(List<Class<?>> excludedCommands) {
+		this.excludedCommands = excludedCommands;
+	}
+
+	public PrintStream getOutputStream() {
+		return outputStream;
+	}
+
+	public void setOutputStream(PrintStream outputStream) {
+		this.outputStream = outputStream;
+	}
+
+	public Map<String, String> getStrings() {
+		return strings;
+	}
+
+	public String getStringsFileName() {
+		return stringsFileName;
+	}
 }

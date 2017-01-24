@@ -1,73 +1,56 @@
 package com.github.solmyr.jicl.commands.manager;
 
+import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
 
-import org.reflections.Reflections;
-
 import com.beust.jcommander.JCommander;
 import com.github.solmyr.jicl.CommandLineConfig;
+import com.github.solmyr.jicl.Strings;
+import com.github.solmyr.jicl.StringsKey;
 import com.github.solmyr.jicl.commands.instantiation.CommandInstantiator;
 import com.github.solmyr.jicl.specialcommands.ExitCommand;
 import com.github.solmyr.jicl.specialcommands.GlobalHelpCommand;
 import com.github.solmyr.jicl.specialcommands.HelpCommand;
 import com.github.solmyr.jicl.specialcommands.PrintCommand;
 
-public class CommandsManager {
+public class CommandManager {
 	private Map<String, Class<?>> commandMap;
 	private final String HELP_KEYWORD;
 	private final String EXIT_KEYWORD;
 
 	private final CommandInstantiator commandInstantiator;
+	private final PrintStream outputStream;
 
-	public CommandsManager(CommandLineConfig clc) {
+	public CommandManager(CommandLineConfig clc) {
 		this.commandInstantiator = clc.getCommInstantiator();
-		this.HELP_KEYWORD = clc.getHelpKeyword();
-		this.EXIT_KEYWORD = clc.getExitKeyword();
+		this.HELP_KEYWORD = Strings.m(StringsKey.HELP_KEYWORD);
+		this.EXIT_KEYWORD = Strings.m(StringsKey.EXIT_KEYWORD);
+		this.outputStream = clc.getOutputStream();
 
-		initCommandMap(clc);
-
+		CommandRegistrator registrator = new CommandRegistrator(clc);
+		commandMap = registrator.registerMap();
 	}
 
-	private void initCommandMap(CommandLineConfig clc) {
-		commandMap = new HashMap<String, Class<?>>();
-		for (String pckg : clc.getCommandsPackage()) {
-			Reflections reflections = new Reflections(pckg);
-			Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Command.class);
-			for (Class<?> clazz : annotated) {
-				if (!ICommand.class.isAssignableFrom(clazz))
-					continue;
-
-				Command command = clazz.getAnnotation(Command.class);
-				commandMap.put(command.name(), clazz);
-			}
-		}
-	}
-
+	
 	public Set<String> getCommandNames() {
 		return commandMap.keySet();
 	}
 
 	public ICommand getCommandInstance(String line) {
 		String[] arguments = line.split("\\s+");
-		String commandName = arguments[0];
+		String commandName = arguments[0].trim();
 
 		if (commandName.equals(HELP_KEYWORD)) {
-			if (arguments.length == 1) {
-				GlobalHelpCommand command = new GlobalHelpCommand(commandMap, HELP_KEYWORD, EXIT_KEYWORD);
-				return command;
-			} else if (arguments.length == 2) {
-				HelpCommand command = new HelpCommand(commandMap.get(arguments[1]));
-				return command;
-			} else {
-				return new PrintCommand("Spatne pouziti prikazu " + HELP_KEYWORD);
-			}
+			return helpCommand(arguments);
 		}
 
 		if (commandName.equals(EXIT_KEYWORD)) {
-			return new ExitCommand();
+			ICommand command = new ExitCommand();
+			command.init(outputStream);
+			return command;
+			
 		}
 
 		if (commandMap.containsKey(commandName)) {
@@ -76,7 +59,8 @@ public class CommandsManager {
 				arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
 
 				ICommand commandInstance = commandInstantiator.createInstance(commandClazz);
-
+				commandInstance.init(outputStream);
+				
 				new JCommander(commandInstance, arguments);
 				return commandInstance;
 
@@ -90,6 +74,23 @@ public class CommandsManager {
 			return null;
 		}
 
+	}
+
+
+	private ICommand helpCommand(String[] arguments) {
+		if (arguments.length == 1) {
+			ICommand command = new GlobalHelpCommand(commandMap, HELP_KEYWORD, EXIT_KEYWORD);
+			command.init(outputStream);
+			return command;
+		} else if (arguments.length == 2) {
+			ICommand command = new HelpCommand(commandMap.get(arguments[1]));
+			command.init(outputStream);
+			return command;
+		} else {
+			ICommand command = new PrintCommand(Strings.m(StringsKey.BAD_HELP_COMMAND_USAGE) + " " + HELP_KEYWORD);
+			command.init(outputStream);
+			return command;
+		}
 	}
 
 }
