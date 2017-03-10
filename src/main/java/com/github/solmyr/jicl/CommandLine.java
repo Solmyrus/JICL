@@ -58,7 +58,7 @@ public class CommandLine {
 			do {
 				try {
 					line = reader.readLine(Strings.m(StringsKey.PROMPT_SYMBOL));
-					continueLoop = doCommand(line, outputStream);
+					continueLoop = doCommand(line);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -75,12 +75,12 @@ public class CommandLine {
 
 	}
 
-	public boolean doCommand(String line, PrintStream outputStream) {
+	public boolean doCommand(String line) {
 		ICommand command = commandManager.getCommandInstance(line);
 		if (command == null) {
 			outputStream.println(Strings.m(StringsKey.UNKNOWN_COMMAND_MESSAGE));
 		} else {
-			doCommand(command, outputStream);
+			doCommand(command);
 		}
 		if (command instanceof ExitCommand) {
 			return false;
@@ -88,7 +88,7 @@ public class CommandLine {
 		return true;
 	}
 	
-	public void doCommand(ICommand command, PrintStream outputStream) {
+	public void doCommand(ICommand command) {
 		command.process();
 	}
 	

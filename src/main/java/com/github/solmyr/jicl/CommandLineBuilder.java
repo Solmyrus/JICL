@@ -1,5 +1,8 @@
 package com.github.solmyr.jicl;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import com.github.solmyr.jicl.commands.instantiation.BasicCommandInstantiator;
 import com.github.solmyr.jicl.commands.instantiation.CommandInstantiator;
 import com.github.solmyr.jicl.commands.manager.ICommand;
@@ -58,6 +61,11 @@ public class CommandLineBuilder {
 	
 	public CommandLineBuilder stringsFileName(String fileName) {
 		clc.setStringsFileName(fileName);
+		return this;
+	}
+	
+	public CommandLineBuilder outputPrintStream(PrintStream out) {
+		clc.setOutputStream(out);
 		return this;
 	}
 	
